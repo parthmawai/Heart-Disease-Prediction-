@@ -21,6 +21,9 @@ df['thal'] = pd.to_numeric(df['thal'])
 # Fill missing values with the mean
 df.fillna(df.mean(), inplace=True)
 
+# Convert target to binary classification (disease vs. no disease)
+df['target'] = df['target'].apply(lambda x: 1 if x > 0 else 0)
+
 # Encode categorical variables
 df = pd.get_dummies(df, drop_first=True)
 
@@ -43,17 +46,6 @@ y_pred = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("Classification Report:\n", classification_report(y_test, y_pred))
-
-# Filter the dataset to binary classification
-df['target'] = df['target'].apply(lambda x: 1 if x > 0 else 0)
-
-# Split, train, and evaluate with binary classification
-X = df.drop('target', axis=1)
-y = df['target']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = LogisticRegression(max_iter=1000)
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
 
 # Feature importance for specific parameters
 importance = model.coef_[0]
